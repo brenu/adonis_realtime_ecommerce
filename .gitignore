@@ -9,3 +9,6 @@ tmp
 
 # The development sqlite file
 database/*.sqlite
+
+# The visual studio configuration of mine
+.vscode
