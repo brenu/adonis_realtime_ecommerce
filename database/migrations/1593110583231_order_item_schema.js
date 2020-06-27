@@ -7,20 +7,20 @@ class OrderItemSchema extends Schema {
   up() {
     this.create('order_items', table => {
       table.increments();
-      table.integer('product_id').usigned();
+      table.integer('product_id').unsigned();
       table.integer('quantity').unsigned().defaultTo(1);
       table.decimal('subTotal', 12, 2);
-      table.integer('order_id').usigned();
+      table.integer('order_id').unsigned();
 
       table
         .foreign('product_id')
-        .references(id)
+        .references('id')
         .inTable('products')
         .onDelete('cascade');
 
       table
         .foreign('order_id')
-        .references(id)
+        .references('id')
         .inTable('orders')
         .onDelete('cascade');
     });

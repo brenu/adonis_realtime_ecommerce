@@ -14,13 +14,13 @@ class CouponOrderSchema extends Schema {
 
       table
         .foreign('coupon_id')
-        .references(id)
+        .references('id')
         .inTable('coupons')
         .onDelete('cascade');
 
       table
         .foreign('order_id')
-        .references(id)
+        .references('id')
         .inTable('orders')
         .onDelete('cascade');
     });
