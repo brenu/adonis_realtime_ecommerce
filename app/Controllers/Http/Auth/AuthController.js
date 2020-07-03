@@ -35,8 +35,13 @@ class AuthController {
     }
   }
 
-  async login({ req, res, auth }) {
-    //
+  /* Auth appears down there because Node.js is async */
+  async login(ctx) {
+    const { email, password } = request.all();
+
+    let data = await auth.withRefreshToken().attempt(email, password);
+
+    return Response.send({ data });
   }
 
   async refresh({ req, res, auth }) {
