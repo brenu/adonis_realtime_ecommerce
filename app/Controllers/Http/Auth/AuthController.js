@@ -58,8 +58,15 @@ class AuthController {
     return response.send({ data: user });
   }
 
-  async logout({ req, res, auth }) {
-    //
+  async logout({ request, response, auth }) {
+    let refreshToken = request.input('refresh_token');
+
+    if (!refreshToken) {
+      refreshToken = request.header('refresh_token');
+    }
+
+    await auth.authenticator('jwt').revokeTokens([refreshToken], true);
+    return response.status(204).send({});
   }
 
   async forgot({ req, res }) {
