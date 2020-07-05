@@ -5,7 +5,7 @@ const User = use('App/Models/User');
 const Role = use('Role');
 
 class AuthController {
-  async register({ req, res }) {
+  async register({ request, response }) {
     const trx = await Database.beginTransaction();
     try {
       const { name, surname, email, password } = request.all();
@@ -36,7 +36,7 @@ class AuthController {
   }
 
   /* Auth appears down there because Node.js is async */
-  async login(ctx) {
+  async login({ request, response, auth }) {
     const { email, password } = request.all();
 
     let data = await auth.withRefreshToken().attempt(email, password);
@@ -44,8 +44,18 @@ class AuthController {
     return Response.send({ data });
   }
 
-  async refresh({ req, res, auth }) {
-    //
+  async refresh({ request, response, auth }) {
+    let refreshToken = request.input('refresh_token');
+
+    if (!refreshToken) {
+      refreshToken = request.header('refresh_token');
+    }
+
+    const user = await auth
+      .newRefreshToken()
+      .generateForRefreshToken(refreshToken);
+
+    return response.send({ data: user });
   }
 
   async logout({ req, res, auth }) {
