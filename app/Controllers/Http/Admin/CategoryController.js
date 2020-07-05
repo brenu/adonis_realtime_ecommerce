@@ -18,12 +18,13 @@ class CategoryController {
    * @param {Request} ctx.request
    * @param {Response} ctx.response
    * @param {View} ctx.view
+   * @param {object} ctx.pagination
    */
-  async index({ request, response, view }) {
-    const page = request.input('page');
-    const limit = request.input('limit');
-
-    const categories = await Category.query().paginate(page, limit);
+  async index({ request, response, view, pagination }) {
+    const categories = await Category.query().paginate(
+      pagination.page,
+      pagination.limit
+    );
     return response.send(categories);
   }
 
