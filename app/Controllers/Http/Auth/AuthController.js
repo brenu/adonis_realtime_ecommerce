@@ -26,10 +26,10 @@ class AuthController {
 
       await trx.commit();
 
-      return res.status(201).send({ data: user });
+      return response.status(201).send({ data: user });
     } catch (error) {
       await trx.rollback();
-      return res.status(400).send({
+      return response.status(400).send({
         message: 'Erro ao realizar cadastro!',
       });
     }
@@ -41,7 +41,7 @@ class AuthController {
 
     let data = await auth.withRefreshToken().attempt(email, password);
 
-    return Response.send({ data });
+    return response.send({ data });
   }
 
   async refresh({ request, response, auth }) {
