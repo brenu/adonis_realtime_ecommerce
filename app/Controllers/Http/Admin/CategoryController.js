@@ -65,7 +65,7 @@ class CategoryController {
    * @param {View} ctx.view
    */
   async show({ params: { id }, request, response, view }) {
-    const category = await Category.findOrFail(params);
+    const category = await Category.findOrFail(id);
 
     return response.send(category);
   }
