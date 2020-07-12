@@ -27,7 +27,7 @@ class ProductController {
       query.where('name', 'ILIKE', `%${name}%`);
     }
 
-    const products = await query.paginate(pagination.page, pagionation.limit);
+    const products = await query.paginate(pagination.page, pagination.limit);
 
     return response.send(products);
   }
