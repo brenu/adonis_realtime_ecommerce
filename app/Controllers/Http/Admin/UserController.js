@@ -71,7 +71,7 @@ class UserController {
    * @param {Response} ctx.response
    */
   async show({ params: { id }, request, response }) {
-    const user = User.findOrFail(id);
+    const user = await User.findOrFail(id);
 
     return response.send(user);
   }
@@ -85,22 +85,16 @@ class UserController {
    * @param {Response} ctx.response
    */
   async update({ params: { id }, request, response }) {
-    const user = User.findOrFail(id);
+    const user = await User.findOrFail(id);
     try {
-      const userData = request.only([
-        'name',
-        'surname',
-        'email',
-        'password',
-        'image_id',
-      ]);
-      user.merge(userData);
+      const { name, surname, email, password, image_id } = request.all();
+      user.merge({ name, surname, email, password, image_id });
       await user.save();
       return response.send(user);
     } catch (error) {
-      user
+      return response
         .status(400)
-        .send({ message: 'Não foi possível atualizar o usuário!' });
+        .send({ message: 'Não foi possível atualizar os seus dados!' });
     }
   }
 
