@@ -35,17 +35,6 @@ class UserController {
   }
 
   /**
-   * Render a form to be used for creating a new user.
-   * GET users/create
-   *
-   * @param {object} ctx
-   * @param {Request} ctx.request
-   * @param {Response} ctx.response
-   * @param {View} ctx.view
-   */
-  async create({ request, response, view }) {}
-
-  /**
    * Create/save a new user.
    * POST users
    *
@@ -53,7 +42,25 @@ class UserController {
    * @param {Request} ctx.request
    * @param {Response} ctx.response
    */
-  async store({ request, response }) {}
+  async store({ request, response }) {
+    try {
+      const { name, surname, email, password, image_id } = request.all();
+
+      const user = await User.create({
+        name,
+        surname,
+        email,
+        password,
+        image_id,
+      });
+
+      return response.status(201).send(user);
+    } catch (error) {
+      return response
+        .status(400)
+        .send({ message: 'Não foi possível criar o usuário!' });
+    }
+  }
 
   /**
    * Display a single user.
@@ -64,18 +71,11 @@ class UserController {
    * @param {Response} ctx.response
    * @param {View} ctx.view
    */
-  async show({ params, request, response, view }) {}
+  async show({ params: { id }, request, response }) {
+    const user = User.findOrFail(id);
 
-  /**
-   * Render a form to update an existing user.
-   * GET users/:id/edit
-   *
-   * @param {object} ctx
-   * @param {Request} ctx.request
-   * @param {Response} ctx.response
-   * @param {View} ctx.view
-   */
-  async edit({ params, request, response, view }) {}
+    return response.send(user);
+  }
 
   /**
    * Update user details.
