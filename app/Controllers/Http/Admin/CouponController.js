@@ -33,17 +33,6 @@ class CouponController {
   }
 
   /**
-   * Render a form to be used for creating a new coupon.
-   * GET coupons/create
-   *
-   * @param {object} ctx
-   * @param {Request} ctx.request
-   * @param {Response} ctx.response
-   * @param {View} ctx.view
-   */
-  async create({ request, response, view }) {}
-
-  /**
    * Create/save a new coupon.
    * POST coupons
    *
@@ -62,18 +51,11 @@ class CouponController {
    * @param {Response} ctx.response
    * @param {View} ctx.view
    */
-  async show({ params, request, response, view }) {}
+  async show({ params: { id }, request, response }) {
+    const coupon = await Coupon.findOrFail(id);
 
-  /**
-   * Render a form to update an existing coupon.
-   * GET coupons/:id/edit
-   *
-   * @param {object} ctx
-   * @param {Request} ctx.request
-   * @param {Response} ctx.response
-   * @param {View} ctx.view
-   */
-  async edit({ params, request, response, view }) {}
+    return response.send(coupon);
+  }
 
   /**
    * Update coupon details.
