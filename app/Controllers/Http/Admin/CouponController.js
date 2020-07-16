@@ -131,7 +131,61 @@ class CouponController {
    * @param {Request} ctx.request
    * @param {Response} ctx.response
    */
-  async update({ params, request, response }) {}
+  async update({ params: { id }, request, response }) {
+    const trx = await Database.beginTransaction();
+    var coupon = await Coupon.findOrFail(id);
+    var canUseFor = {
+      customer: false,
+      product: false,
+    };
+
+    try {
+      const couponData = request.only([
+        'code',
+        'discount',
+        'valid_from',
+        'valid_until',
+        'quantity',
+        'type',
+        'recursive',
+      ]);
+
+      coupon.merge(couponData);
+
+      const { users, products } = request.only(['users', 'products']);
+
+      const service = new Service(coupon, trx);
+
+      if (users && users.length > 0) {
+        await service.syncUsers(users);
+        canUseFor.customer = true;
+      }
+
+      if (products && products.length > 0) {
+        await service.syncUsers(users);
+        canUseFor.product = true;
+      }
+
+      if (canUseFor.product && canUseFor.customer) {
+        coupon.can_use_for = 'product_client';
+      } else if (canUseFor.product && !canUseFor.customer) {
+        coupon.can_use_for = 'product';
+      } else if (!canUseFor.product && canUseFor.customer) {
+        coupon.can_use_for = 'customer';
+      } else {
+        coupon.can_use_for = 'all';
+      }
+
+      await coupon.save(trx);
+      await trx.commit();
+
+      return response.send(coupon);
+    } catch (error) {
+      return response
+        .status(400)
+        .send({ message: 'Não foi possível realizar a operação' });
+    }
+  }
 
   /**
    * Delete a coupon with id.
