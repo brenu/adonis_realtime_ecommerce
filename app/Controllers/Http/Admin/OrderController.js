@@ -94,7 +94,28 @@ class OrderController {
    * @param {Request} ctx.request
    * @param {Response} ctx.response
    */
-  async update({ params, request, response }) {}
+  async update({ params: { id }, request, response }) {
+    const order = await Order.findOrFail(id);
+
+    const trx = await Database.beginTransaction();
+    try {
+      const { user_id, items, status } = request.all();
+
+      order.merge({ user_id, status }, trx);
+      const service = new Service(order, trx);
+
+      await service.updateItems(items);
+      await order.save(trx);
+      await trx.commit();
+
+      return response.send(order);
+    } catch (error) {
+      await trx.rollback();
+      return response
+        .status(400)
+        .send({ message: 'Não foi possúvel atualizar o pedido' });
+    }
+  }
 
   /**
    * Delete a order with id.
