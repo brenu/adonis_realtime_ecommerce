@@ -5,6 +5,7 @@
 /** @typedef {import('@adonisjs/framework/src/View')} View */
 
 const Order = use('App/Models/Order');
+const Database = use('Database');
 
 /**
  * Resourceful controller for interacting with orders
@@ -39,17 +40,6 @@ class OrderController {
   }
 
   /**
-   * Render a form to be used for creating a new order.
-   * GET orders/create
-   *
-   * @param {object} ctx
-   * @param {Request} ctx.request
-   * @param {Response} ctx.response
-   * @param {View} ctx.view
-   */
-  async create({ request, response, view }) {}
-
-  /**
    * Create/save a new order.
    * POST orders
    *
@@ -68,18 +58,11 @@ class OrderController {
    * @param {Response} ctx.response
    * @param {View} ctx.view
    */
-  async show({ params, request, response, view }) {}
+  async show({ params: { id }, request, response, view }) {
+    const order = await Order.findOrFail(id);
 
-  /**
-   * Render a form to update an existing order.
-   * GET orders/:id/edit
-   *
-   * @param {object} ctx
-   * @param {Request} ctx.request
-   * @param {Response} ctx.response
-   * @param {View} ctx.view
-   */
-  async edit({ params, request, response, view }) {}
+    return response.send(order);
+  }
 
   /**
    * Update order details.
@@ -99,7 +82,26 @@ class OrderController {
    * @param {Request} ctx.request
    * @param {Response} ctx.response
    */
-  async destroy({ params, request, response }) {}
+  async destroy({ params: { id }, request, response }) {
+    const order = await order.findOrFail(id);
+
+    const trx = await Database.beginTransaction();
+
+    try {
+      await order.items().delete(trx);
+      await order.coupons().delete(trx);
+      await order.delete(trx);
+
+      await trx.commit();
+
+      return response.status(204).send({});
+    } catch (error) {
+      await trx.rollback();
+      return response
+        .status(400)
+        .send({ message: 'Não foi possível deletar o pedido' });
+    }
+  }
 }
 
 module.exports = OrderController;
