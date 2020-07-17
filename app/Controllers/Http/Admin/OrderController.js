@@ -1,8 +1,10 @@
-'use strict'
+'use strict';
 
 /** @typedef {import('@adonisjs/framework/src/Request')} Request */
 /** @typedef {import('@adonisjs/framework/src/Response')} Response */
 /** @typedef {import('@adonisjs/framework/src/View')} View */
+
+const Order = use('App/Models/Order');
 
 /**
  * Resourceful controller for interacting with orders
@@ -17,7 +19,23 @@ class OrderController {
    * @param {Response} ctx.response
    * @param {View} ctx.view
    */
-  async index ({ request, response, view }) {
+  async index({ request, response, pagination }) {
+    const { status, id } = request.only(['status', 'id']);
+
+    const query = Order.query();
+
+    if (status && id) {
+      query.where('status', status);
+      query.orWhere('id', 'ILIKE', `%${id}%`);
+    } else if (status) {
+      query.where('status', status);
+    } else if (id) {
+      query.where('id', ILIKE, `%${id}%`);
+    }
+
+    const orders = query.paginate(pagination.page, pagination.limit);
+
+    return response.send(orders);
   }
 
   /**
@@ -29,8 +47,7 @@ class OrderController {
    * @param {Response} ctx.response
    * @param {View} ctx.view
    */
-  async create ({ request, response, view }) {
-  }
+  async create({ request, response, view }) {}
 
   /**
    * Create/save a new order.
@@ -40,8 +57,7 @@ class OrderController {
    * @param {Request} ctx.request
    * @param {Response} ctx.response
    */
-  async store ({ request, response }) {
-  }
+  async store({ request, response }) {}
 
   /**
    * Display a single order.
@@ -52,8 +68,7 @@ class OrderController {
    * @param {Response} ctx.response
    * @param {View} ctx.view
    */
-  async show ({ params, request, response, view }) {
-  }
+  async show({ params, request, response, view }) {}
 
   /**
    * Render a form to update an existing order.
@@ -64,8 +79,7 @@ class OrderController {
    * @param {Response} ctx.response
    * @param {View} ctx.view
    */
-  async edit ({ params, request, response, view }) {
-  }
+  async edit({ params, request, response, view }) {}
 
   /**
    * Update order details.
@@ -75,8 +89,7 @@ class OrderController {
    * @param {Request} ctx.request
    * @param {Response} ctx.response
    */
-  async update ({ params, request, response }) {
-  }
+  async update({ params, request, response }) {}
 
   /**
    * Delete a order with id.
@@ -86,8 +99,7 @@ class OrderController {
    * @param {Request} ctx.request
    * @param {Response} ctx.response
    */
-  async destroy ({ params, request, response }) {
-  }
+  async destroy({ params, request, response }) {}
 }
 
-module.exports = OrderController
+module.exports = OrderController;
