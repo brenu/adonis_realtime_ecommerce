@@ -6,6 +6,7 @@
 
 const Order = use('App/Models/Order');
 const Database = use('Database');
+const Service = use('App/Services/Order/OrderService');
 
 /**
  * Resourceful controller for interacting with orders
@@ -47,7 +48,28 @@ class OrderController {
    * @param {Request} ctx.request
    * @param {Response} ctx.response
    */
-  async store({ request, response }) {}
+  async store({ request, response }) {
+    const trx = await Database.beginTransaction();
+
+    try {
+      const { user_id, items, status } = request.all();
+      let order = await Order.create({ user_id, status }, trx);
+
+      const service = new Service(order, trx);
+
+      if (items && items.length > 0) {
+        await service.syncItems(items);
+      }
+
+      await trx.commit();
+
+      return response.status(201).send(order);
+    } catch (error) {
+      return response
+        .status(400)
+        .send({ message: 'Não foi possível realizar o pedido' });
+    }
+  }
 
   /**
    * Display a single order.
