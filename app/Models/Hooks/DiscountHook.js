@@ -1,5 +1,6 @@
 'use strict';
 
+const Database = use('Database');
 const Coupon = use('App/Models/Coupon');
 const Order = use('App/Models/Order');
 
@@ -51,4 +52,26 @@ DiscountHook.calculateValues = async model => {
   }
 
   return model;
+};
+
+// Decrementa a quantidade de cupons disponíveis para uso
+DiscountHook.decrementCoupons = async model => {
+  const query = Database.from('coupons');
+
+  if (model.$transaction) {
+    query.transacting(model.$transaction);
+  }
+
+  await query.where('id', model.coupon_id).decrement('quantity', 1);
+};
+
+// Incrementa a quantidade de cupons disponíveis para uso
+DiscountHook.incrementCoupons = async model => {
+  const query = Database.from('coupons');
+
+  if (model.$transaction) {
+    query.transacting(model.$transaction);
+  }
+
+  await query.where('id', model.coupon_id).increment('quantity', 1);
 };
