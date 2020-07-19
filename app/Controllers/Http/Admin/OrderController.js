@@ -181,6 +181,15 @@ class OrderController {
       return response.status(400).send({ message: 'Erro ao aplicar cupom!' });
     }
   }
+
+  async removeDiscount({ request, response }) {
+    const { discount_id } = request.all();
+    const discount = await Discount.findOrFail(discount_id);
+
+    await discount.delete();
+
+    return response.status(204).send();
+  }
 }
 
 module.exports = OrderController;
