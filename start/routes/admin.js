@@ -22,11 +22,8 @@ Route.group(() => {
   /**
    * Order resource routes
    */
-  Route.post('orders/:id/discount', 'OrderController.applyDiscount').apiOnly();
-  Route.delete(
-    'orders/:id/discount',
-    'OrderController.removeDiscount'
-  ).apiOnly();
+  Route.post('orders/:id/discount', 'OrderController.applyDiscount');
+  Route.delete('orders/:id/discount', 'OrderController.removeDiscount');
   Route.resource('orders', 'OrderController').apiOnly();
 
   /**
