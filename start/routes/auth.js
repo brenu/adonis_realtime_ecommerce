@@ -6,10 +6,12 @@ const Route = use('Route');
 Route.group(() => {
   Route.post('register', 'AuthController.register')
     .as('auth.register')
-    .middleware(['guest']);
+    .middleware(['guest'])
+    .validator('Auth/Register');
   Route.post('login', 'AuthController.login')
     .as('auth.login')
-    .middleware(['guest']);
+    .middleware(['guest'])
+    .validator('Auth/Login');
   Route.put('refresh', 'AuthController.refresh')
     .as('auth.refresh')
     .middleware(['guest']);
