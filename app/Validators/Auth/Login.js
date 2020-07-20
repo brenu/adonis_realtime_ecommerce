@@ -4,8 +4,8 @@ class Login {
   get rules() {
     return {
       // validation rules
-      email: 'required|email|unique:users',
-      password: 'required|min:8',
+      email: 'required|email|unique',
+      password: 'required',
     };
   }
 }
