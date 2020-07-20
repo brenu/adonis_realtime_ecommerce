@@ -40,4 +40,6 @@ Route.group(() => {
   Route.resource('users', 'UserController').apiOnly();
 })
   .prefix('api/v1/admin')
-  .namespace('Admin');
+  .namespace('Admin')
+  .middleware(['auth', 'is:( admin || manager )']);
+// O usuário precisa ser autenticado e admin/manager ^^^
