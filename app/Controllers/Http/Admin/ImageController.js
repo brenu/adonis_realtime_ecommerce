@@ -8,7 +8,7 @@ const { manage_single_upload } = require('../../../Helpers');
 
 const Image = use('App/Models/Image');
 const { manage_single_upload, manage_multiple_uploads } = use('App/Helpers');
-const fs = use("fs");
+const fs = use('fs');
 
 /**
  * Resourceful controller for interacting with images
@@ -147,15 +147,14 @@ class ImageController {
     try {
       let filepath = Helpers.publicPath(`uploads/${image.path}`);
 
-      await fs.unlink(filepath, err => {
-        if(!err){
-          await image.delete();
-        }
-      });
+      fs.unlinkSync(filepath);
+      await image.delete();
 
       return response.status(204).send();
     } catch (error) {
-      response.status(400).send({ message: 'Não foi possível deletar a imagem'});
+      response
+        .status(400)
+        .send({ message: 'Não foi possível deletar a imagem' });
     }
   }
 }
