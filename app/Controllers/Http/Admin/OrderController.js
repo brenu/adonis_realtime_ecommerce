@@ -29,15 +29,14 @@ class OrderController {
     const query = Order.query();
 
     if (status && id) {
-      query.where('status', status);
-      query.orWhere('id', 'ILIKE', `%${id}%`);
+      query.where('status', status).orWhere('id', 'ILIKE', `%${id}%`);
     } else if (status) {
       query.where('status', status);
     } else if (id) {
       query.where('id', ILIKE, `%${id}%`);
     }
 
-    const orders = query.paginate(pagination.page, pagination.limit);
+    const orders = await query.paginate(pagination.page, pagination.limit);
 
     return response.send(orders);
   }
