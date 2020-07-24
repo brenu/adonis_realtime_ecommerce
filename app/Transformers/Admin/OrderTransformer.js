@@ -1,5 +1,7 @@
 'use strict';
 
+const UserTransformer = require('./UserTransformer');
+
 const BumblebeeTransformer = use('Bumblebee/Transformer');
 
 /**
@@ -9,6 +11,9 @@ const BumblebeeTransformer = use('Bumblebee/Transformer');
  * @constructor
  */
 class OrderTransformer extends BumblebeeTransformer {
+  availableInclude() {
+    return ['user', 'coupons', 'items', 'discounts'];
+  }
   /**
    * This method is used to transform the data.
    */
@@ -29,6 +34,22 @@ class OrderTransformer extends BumblebeeTransformer {
       subtotal:
         order.__meta__ && order.__meta__.subtotal ? order.__meta__.subtotal : 0,
     };
+  }
+
+  includeUser(order) {
+    return this.item(order.getRelated('user'), UserTransformer);
+  }
+
+  includeItems(order) {
+    return this.item(order.getRelated('items'), OrderItemTransformer);
+  }
+
+  includeCoupons(order) {
+    return this.item(order.getRelated('coupons'), CouponTransformer);
+  }
+
+  includeDiscount(order) {
+    return this.item(order.getRelated('discounts'), DiscountTransformer);
   }
 }
 
