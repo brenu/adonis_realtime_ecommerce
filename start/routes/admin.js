@@ -59,7 +59,7 @@ Route.group(() => {
   /** Dashboard route */
   Route.get('dashboard', 'DashboardController.index').as('dashboard');
 })
-  .prefix('api/v1/admin')
+  .prefix('v1/admin')
   .namespace('Admin')
   .middleware(['auth', 'is:( admin || manager )']);
 // O usuário precisa ser autenticado e admin/manager ^^^

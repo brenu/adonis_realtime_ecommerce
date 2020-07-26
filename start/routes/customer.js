@@ -18,5 +18,5 @@ Route.group(() => {
   Route.post('orders', 'OrderController.store');
   Route.put('orders/:id', 'OrderController.update');
 })
-  .prefix('api/v1')
+  .prefix('v1')
   .namespace('Customer');
