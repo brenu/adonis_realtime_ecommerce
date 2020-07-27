@@ -21,7 +21,7 @@ class ProductController {
    * @param {View} ctx.view
    */
   async index({ request, response, view, pagination, transform }) {
-    const { title } = request.input('title');
+    const title = request.input('title');
 
     const query = Product.query();
 
