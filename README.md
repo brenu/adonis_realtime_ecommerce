@@ -4,4 +4,4 @@ This repository was created to store the project that's being made as I'm walkin
 
 ## Project status
 
-At the present moment, it has migrations, seeders, models and controllers implemented, and I'm working in order to have all the security stuff done.
+At the present moment, it has almost everything implemented, and I'm working in order to have it all working 100%.
