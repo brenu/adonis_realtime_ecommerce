@@ -20,8 +20,9 @@ class OrderController {
    * @param {Response} ctx.response
    * @param {View} ctx.view
    */
-  async index({ request, response, transform, pagination }) {
+  async index({ request, response, transform, pagination, auth }) {
     // Order number
+    const client = await auth.getUser();
     const number = request.input('number');
 
     const query = Order.query();
@@ -29,6 +30,8 @@ class OrderController {
     if (number) {
       query.where('id', 'ILIKE', `${number}`);
     }
+
+    query.where('user_id', client.id);
 
     const results = await query
       .orderBy('id', 'DESC')
@@ -58,8 +61,12 @@ class OrderController {
    * @param {Response} ctx.response
    * @param {View} ctx.view
    */
-  async show({ params: { id }, request, response, transform }) {
-    const result = await Order.findOrFail(id);
+  async show({ params: { id }, request, response, transform, auth }) {
+    const customer = await auth.getUser();
+    const result = await Order.query()
+      .where('user_id', customer.id)
+      .where('id', id)
+      .firstOrFail();
 
     const order = await transform.item(result, Transformer);
 
