@@ -6,6 +6,9 @@
 
 const Order = use('App/Models/Order');
 const Transformer = use('App/Transformers/Admin/OrderTransformer');
+const Database = use('Database');
+const Service = use('App/Services/Order/OrderService');
+const Ws = use('Ws');
 
 /**
  * Resourceful controller for interacting with orders
@@ -50,7 +53,40 @@ class OrderController {
    * @param {Request} ctx.request
    * @param {Response} ctx.response
    */
-  async store({ request, response }) {}
+  async store({ request, response, auth, transform }) {
+    const trx = await Database.beginTransaction();
+
+    try {
+      const items = request.input('items'); // Array
+      const client = await auth.getUser();
+      var order = await Order.create({ user_id: client.id }, trx);
+      const service = new Service(order, trx);
+
+      if (items.length > 0) {
+        await service.syncItems(items);
+      }
+
+      await trx.commit();
+
+      // Instancia os hooks de cálculos dos subtotais
+      order = await Order.find(order.id);
+      order = await transform.include('items').item(order, Transformer);
+
+      // Emite um broadcast no websocket
+      const topic = Ws.getCHannel('notifications').topic('notifications');
+
+      if (topic) {
+        topic.broadcast('new:order', order);
+      }
+
+      return response.status(201).send(order);
+    } catch (error) {
+      await trx.rollback();
+      return response
+        .status(400)
+        .send({ message: 'Não foi possível fazer seu pedido!' });
+    }
+  }
 
   /**
    * Display a single order.
