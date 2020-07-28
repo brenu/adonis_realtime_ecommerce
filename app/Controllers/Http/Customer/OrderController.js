@@ -149,16 +149,6 @@ class OrderController {
         .send({ message: 'Não foi possível atualizar o pedido!' });
     }
   }
-
-  /**
-   * Delete a order with id.
-   * DELETE orders/:id
-   *
-   * @param {object} ctx
-   * @param {Request} ctx.request
-   * @param {Response} ctx.response
-   */
-  async destroy({ params, request, response }) {}
 }
 
 module.exports = OrderController;
