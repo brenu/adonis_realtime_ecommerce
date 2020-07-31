@@ -4,4 +4,4 @@ This repository was created to store the project that's being made as I'm walkin
 
 ## Project status
 
-At the present moment, it has almost everything implemented, and I'm working in order to have it all working 100%.
+At the present moment, all the course content is done, but maybe I will change something later.
