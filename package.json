@@ -34,7 +34,7 @@
     "minimist": "^1.2.5",
     "pg": "^8.2.1",
     "set-value": "^3.0.2",
-    "lodash": ">=4.17.19"
+    "lodash": ">=4.17.21"
   },
   "devDependencies": {},
   "autoload": {
